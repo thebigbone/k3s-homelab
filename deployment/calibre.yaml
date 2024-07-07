@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: calibre
+  labels:
+    app: calibre
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: calibre   
+  template:
+    metadata:       
+      labels:
+        app: calibre
+    spec:
+      containers:  
+        - name: calibre
+          image: lscr.io/linuxserver/calibre-web:latest
+          ports:
+            - containerPort: 8083
+          volumeMounts:
+            - name: books
+              mountPath: /books
+            - name: books
+              mountPath: /config
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+      volumes:
+        - name: books
+          persistentVolumeClaim:
+            claimName: pvc-dynamic

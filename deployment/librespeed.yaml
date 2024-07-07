@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: librespeed
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: librespeed
+  template:
+    metadata:
+      labels:
+        app: librespeed
+    spec:
+      containers:
+        - name: librespeed
+          image: lscr.io/linuxserver/librespeed
+          ports:
+            - containerPort: 80
+          env:
+            - name: PUID
+              value: "1000" # Replace with your PUID
+            - name: PGID
+              value: "1000" # Replace with your PGID
+            - name: TZ
+              value: "America/New_York" # Replace with your timezone
+          volumeMounts:
+            - name: data
+              mountPath: /config
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pvc-dynamic
+
